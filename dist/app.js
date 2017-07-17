@@ -1,7 +1,6 @@
-/**
- * Created by jhorak on 17.07.2017.
- */
+#!/usr/bin/env node
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var app = express();
 app.get('/hello', function (req, res) {
