@@ -1,0 +1,17 @@
+{
+  "name": "node-cookbook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.0.36",
+    "@types/node": "^8.0.13",
+    "express": "^4.15.3",
+    "typescript": "^2.4.1"
+  }
+}
