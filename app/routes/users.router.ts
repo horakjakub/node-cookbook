@@ -17,10 +17,10 @@ UserRouter.get('/', function (req, res){
 
     if(paramsKeys.length > 0 && paramsKeys.length < 2 && paramsKeys[0] !== 'password'){
         userDataService.find(res, paramsKeys[0], params[paramsKeys[0]]);
-    } else if (paramsKeys.length > 1){ r
-        userDataService.list(res);
+    } else if (paramsKeys.length > 1){
+        // this API supports only one parameter
     } else {
-
+        userDataService.list(res);
     }
 });
 
@@ -47,7 +47,7 @@ UserRouter.delete('/', function (req, res){
 
     if(paramsKeys.length > 0 && paramsKeys.length < 2 && paramsKeys[0] !== 'password'){
         userDataService.remove(res, paramsKeys[0], params[paramsKeys[0]]);
-    } else if (paramsKeys.length > 1){ r
+    } else if (paramsKeys.length > 1){
         // this API supports only one parameter
     } else {
 

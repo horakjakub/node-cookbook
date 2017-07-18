@@ -19,7 +19,7 @@ app.get('/hello', (req, res)=>{
 
 mongoose.connect(DB_URL);
 
-app.use('/recipes', RecipesRouter);
+app.use('/recipe', RecipesRouter);
 app.use('/user', UserRouter);
 
 app.listen(port, function () {
