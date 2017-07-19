@@ -2,8 +2,10 @@
  * Created by jhorak on 17.07.2017.
  */
 
-import { prepareSchemaDataFromJson } from "./data.factory";
+import { dataSchemasFactoriesFactory } from "./schemas-factories.factory";
 import { Model } from 'mongoose';
+
+//@TODO: change response in all queries for responseInterpreterFunction
 
 export interface IBasicDataServiceOptions {
     defaultSearchKey?: string;
@@ -18,7 +20,7 @@ export class BasicDataService {
     constructor(modelName: string, model, dataServiceOptions?: IBasicDataServiceOptions){
         this.modelName =  modelName;
         this.model = model;
-        this.schemaFactory = prepareSchemaDataFromJson(this.modelName);
+        this.schemaFactory = dataSchemasFactoriesFactory(this.modelName);
         if(dataServiceOptions !== undefined){
             for(let option in dataServiceOptions){
                 this.checkOption(option, dataServiceOptions[option]);
@@ -73,10 +75,10 @@ export class BasicDataService {
 
     create(requestBody, response) {
         let schemaData = this.schemaFactory(requestBody);
-        schemaData.save(function(error) {
+        schemaData.save(function(error, result) {
             if (!error){
                 schemaData.save();
-                response.send(`User ${requestBody.username} was created`);
+                response.send(result);
             }
             else {
                 response.send(error.message);
@@ -91,11 +93,9 @@ export class BasicDataService {
             searchCriteriaObject[searchKey] = searchValue;
         } else if (this.defaultSearchKey){
             searchCriteriaObject[this.defaultSearchKey] = requestBody[this.defaultSearchKey];
-        } else {
-            /// "Please specify which data record should be updated"
         }
 
-        this.model.findOneAndUpdate(searchCriteriaObject, requestBody, { upsert: true },
+        this.model.findOneAndUpdate(searchCriteriaObject, requestBody, { upsert: true, setDefaultsOnInsert: true },
             (error, result)=>{
                 if(error){
                     response.send(error.message);
