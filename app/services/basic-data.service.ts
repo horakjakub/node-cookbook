@@ -76,6 +76,7 @@ export class BasicDataService {
         schemaData.save(function(error) {
             if (!error){
                 schemaData.save();
+                response.send(`User ${requestBody.username} was created`);
             }
             else {
                 response.send(error.message);
