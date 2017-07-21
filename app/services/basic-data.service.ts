@@ -3,128 +3,70 @@
  */
 
 import { dataSchemasFactoriesFactory } from "./schemas-factories.factory";
-import { Model } from 'mongoose';
+import { Model, Schema } from 'mongoose';
 
-//@TODO: change response in all queries for responseInterpreterFunction
 
 export interface IBasicDataServiceOptions {
-    defaultSearchKey?: string;
+}
+
+export interface ISearchCriteriaObject {
+    [key: string]: string
 }
 
 export class BasicDataService {
     modelName: string;
     model: any;
     schemaFactory: any;
-    defaultSearchKey?: string;
 
-    constructor(modelName: string, model, dataServiceOptions?: IBasicDataServiceOptions){
+    constructor(modelName: string, model, options?: IBasicDataServiceOptions){
         this.modelName =  modelName;
         this.model = model;
         this.schemaFactory = dataSchemasFactoriesFactory(this.modelName);
-        if(dataServiceOptions !== undefined){
-            for(let option in dataServiceOptions){
-                this.checkOption(option, dataServiceOptions[option]);
+
+        if(options !== undefined){
+            for(let option in options){
+                this.checkOption(option, options[option]);
             }
         }
     }
 
     checkOption(option, optionValue){
         switch(option){
-            case "defaultSearchKey":
-                    this.defaultSearchKey = optionValue;
-                break;
             default:
                 break;
         }
     }
 
-    find(response, searchKey?: string, searchValue?: string | number){
-        let searchCriteriaObject = {};
-
-        if(searchKey !== undefined && searchValue !== undefined){
-            searchCriteriaObject[searchKey] = searchValue;
-        } else {
-            /// "Please specify which data record should be searched"
-        }
-
+    find(searchCriteriaObject: ISearchCriteriaObject, resultHandler):void {
         this.model.findOne(searchCriteriaObject,
-            (error, result)=>{
-                debugger;
-                if(error){
-                    response.send(error.message);
-                } else {
-                    response.send(result);
-                }
-            }
+            resultHandler
         );
     }
 
-    list(response) {
-        this.model.find({}, function(error, result) {
-            if (error) {
-                console.error(error);
-                return null;
-            }
-            if (response !== null) {
-                response.setHeader('content-type', 'application/json');
-                response.end(JSON.stringify(result));
-            }
-            return JSON.stringify(result);
-        });
+    list(resultHandler):void {
+        this.model.find({}, resultHandler);
     };
 
-    create(requestBody, response) {
+    create(requestBody, resultHandler):void {
         let schemaData = this.schemaFactory(requestBody);
-        schemaData.save(function(error, result) {
-            if (!error){
-                schemaData.save();
-                response.send(result);
-            }
-            else {
-                response.send(error.message);
-            }
-        });
+        schemaData.save(resultHandler);
     };
 
-    update(requestBody, response, searchKey?: string, searchValue?: string | number){
-        let searchCriteriaObject = {};
-
-        if(searchKey !== undefined && searchValue !== undefined){
-            searchCriteriaObject[searchKey] = searchValue;
-        } else if (this.defaultSearchKey){
-            searchCriteriaObject[this.defaultSearchKey] = requestBody[this.defaultSearchKey];
-        }
-
+    update(searchCriteriaObject: ISearchCriteriaObject, requestBody, resultHandler):void {
         this.model.findOneAndUpdate(searchCriteriaObject, requestBody, { upsert: true, setDefaultsOnInsert: true },
-            (error, result)=>{
-                if(error){
-                    response.send(error.message);
-                } else {
-                    response.send(result);
-                }
-            }
+            resultHandler
         );
     }
 
-    remove(response, searchKey?: string, searchValue?: string | number){
-        let searchCriteriaObject = {};
-
-        if(searchKey !== undefined && searchValue !== undefined){
-            searchCriteriaObject[searchKey] = searchValue;
-        } else {
-            /// "Please specify which data record should be removed"
-        }
-
-        this.model.remove(searchCriteriaObject,
-            (error, result)=>{
-            debugger;
-                if(error){
-                    response.send(error.message);
-                } else {
-                    response.send(result);
-                }
-            }
-        );
+    remove(searchCriteriaObject: ISearchCriteriaObject, resultHandler):void {
+        this.model.remove(searchCriteriaObject, resultHandler);
     }
 
+    findAndRemove(searchCriteriaObject: ISearchCriteriaObject, resultHandler):void {
+        this.model.findOneAndRemove(searchCriteriaObject, resultHandler);
+    }
+
+    findById(id, resultHandler):void {
+        this.model.findById(id, resultHandler);
+    }
 }

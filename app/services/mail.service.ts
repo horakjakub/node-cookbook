@@ -16,16 +16,13 @@ export class Mail {
     FromName: string = BASIC_EMAIL_NAME;
     Subject: string = "";
     ['Text-part']: string = "";
-    ["Html-part"]: string = "<h3>Dear passenger, welcome to Mailjet!</h3><br />May the delivery force be with you!";
+    ["Html-part"]: string = "";
     Recipients: IRecipient[] = [];
 
-    constructor(subject: string, textPart: string, recipients: IRecipient[], htmlTemplate?: string){
+    constructor(recipients: IRecipient[], htmlTemplate: string, subject: string){
         this.Subject = subject;
-        this['Text-part'] = textPart;
         this.Recipients =recipients;
-        if(htmlTemplate){
-            this["Html-part"] = htmlTemplate;
-        }
+        this["Html-part"] = htmlTemplate;
     }
 }
 
