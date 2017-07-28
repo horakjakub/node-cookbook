@@ -1,13 +1,13 @@
-mongod --dbpath c:\mongodb\data --rest
+TODO list 
 
-1. Add Caching 
-2. Add WADL
-3. Add some tests 
-4. Add basic error handling X 
-5. Add data validation (Mongoose Validate) x
-6. Improve Typesript typing 
-7. env config 
-8. configure https SS: 
-9. add npm tasks
-10. check depedencies and delete unnecessary 
-11. add additional authentication for manipulating users accounts (it should depend from ENV); 
+1. add Caching.
+2. add WADL.
+3. add some tests. 
+4. add basic error handling. X 
+5. add data validation (Mongoose Validate). X
+6. improve TypeScript typing. 
+7. env config. 
+8. configure https. 
+9. add npm tasks. X
+10. check dependencies and delete unnecessary packages.
+11. add additional authentication for manipulating users accounts (it should depend from ENV). X 
