@@ -2,12 +2,15 @@
  * Created by jhorak on 17.07.2017.
  */
 
-import * as mongoose from 'mongoose';
+import { IAuthUser } from '../interfaces/auth-user';
+import { Document, Schema, model } from 'mongoose';
+export interface AuthUserModel extends IAuthUser, Document {}
 
-const authUserSchema = new mongoose.Schema({
-    userName: {type: String, index: {unique: true}},
+
+const authUserSchema = new Schema({
+    username: {type: String, index: {unique: true}},
     password: String,
     role: String,
 });
 
-export const AuthUser = mongoose.model('AuthUser', authUserSchema);
+export const AuthUser = model<AuthUserModel>('AuthUser', authUserSchema);

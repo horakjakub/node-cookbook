@@ -2,14 +2,16 @@
  * Created by jhorak on 17.07.2017.
  */
 import { Router } from 'express';
-import * as url from "url";
 import * as createError from "http-errors";
 
 import { User } from '../schemas/user.schema';
 import { BasicDataService } from '../services/basic-data.service';
-import { ActivationToken }from '../schemas/activation-token.schema';
+import { ActivationToken, activationTokenParamsValidator }from '../schemas/activation-token.schema';
+import { BasicRouterHelper } from '../services/basic-router-helper';
 
 export const ActivationTokenRouter = Router();
+export const ActivationTokenRouterHelper = new BasicRouterHelper(activationTokenParamsValidator);
+
 const activationTokenDataService = new BasicDataService("ActivationToken", ActivationToken);
 const userDataService = new BasicDataService("User", User);
 
@@ -27,20 +29,14 @@ function resultHandlerClosuredWithResponse(res, next){
         if(error){
             next(createError(400, result.message));
         } else {
-            res.send('succes!');
+            res.send('success');
         }
     }
 }
 
 ActivationTokenRouter.get('/', function (req, res, next){
-    let params = url.parse(req.url, true).query;
-    let paramsKeys = Object.keys(params);
-
-    if(paramsKeys.length > 0 && paramsKeys.length < 2 && paramsKeys[0] === "token"){
-        activationTokenDataService.findAndRemove({ [paramsKeys[0]]: params[paramsKeys[0]]}, resultHandlerClosuredWithResponse(res, next));
-    } else {
-        next(createError(400, 'Please provide valid parameters.'))
-    }
+    let params = ActivationTokenRouterHelper.returnValidatedParams(req, next);
+    activationTokenDataService.findAndRemove({ [params.key]: params.value }, resultHandlerClosuredWithResponse(res, next));
 });
 
 

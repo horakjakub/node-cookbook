@@ -6,5 +6,4 @@ import { Router } from 'express';
 
 
 export const LoginRouter = Router();
-export const LogoutRouter = Router();
 

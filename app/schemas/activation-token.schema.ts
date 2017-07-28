@@ -4,6 +4,7 @@
 
 import { Document, Schema, model } from 'mongoose';
 import { IActivationToken } from '../interfaces/activation-token';
+import { schemaParamsValidatorFactory } from '../services/schema-validators.factory'
 const randomToken = require('random-token');
 
 export interface ActivationTokenModel extends IActivationToken, Document {}
@@ -14,6 +15,7 @@ export const ActivationTokenSchema = new Schema({
 });
 
 export const ActivationToken = model<ActivationTokenModel>('ActivationToken', ActivationTokenSchema);
+export const activationTokenParamsValidator = schemaParamsValidatorFactory(ActivationTokenSchema, { undesiredParams: ['userId']});
 
 export function activationTokenFactory(): string{
     // @TODO token should be unique
