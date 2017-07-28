@@ -16,7 +16,7 @@ export const UserRouterHelper = new BasicRouterHelper(userParamsValidator);
 
 const userDataService = new BasicDataService("User", User);
 const activationTokenDataService = new BasicDataService("ActivationToken", ActivationToken);
-const severUrl = "http://localhost:8080/";
+const severUrl = process.env.SERVER_URL || "http://localhost:8080/";
 
 UserRouter.put('/', function (req, res, next){
     userDataService.create(req.body, createTokenAndSendEmailConfirmationMail(res, next));
