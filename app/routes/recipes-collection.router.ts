@@ -46,7 +46,7 @@ RecipesCollectionRouter.post('/', function (req, res, next){
 
     RecipesDataService.updateMany('label', req.body,
         (success)=>{
-            recipesIds.push(‌‌success._id);
+            recipesIds.push(success._id);
         },
         (error)=>{
             next(createError(400, error.message));
