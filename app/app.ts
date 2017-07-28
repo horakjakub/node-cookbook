@@ -37,7 +37,7 @@ app.use(checkKeyAuthentication);
 
 //---------- auth methods ------------//
 
-const ACCESS_KEY = process.env.MONGODB_URI || 'tadam';
+const ACCESS_KEY = process.env.ACCESS_KEY || 'tadam';
 
 function checkKeyAuthentication(req, res, next){
     let params = url.parse(req.url, true).query;
