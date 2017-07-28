@@ -89,7 +89,8 @@ function checkIsUserIsActive(req, res, next){
 
 app.get('/hello',
    (req, res)=>{
-    res.writeHead(200)
+    res.writeHead(200);
+    res.end();
 });
 
 // ----------- routes ------------ //
