@@ -21,7 +21,7 @@ import { AuthUser } from './schemas/auth-user.schema'
 // ------------------ // SERVER START // ----------------------- //
 const app = express();
 const port = process.env.PORT || 8080;
-const DB_URL = 'mongodb://localhost/myapp';
+const DB_URL = process.env.MONGODB_URI || 'mongodb://localhost/myapp';
 const UserDataService = new ReactiveDataService('User', User);
 const AuthUserDataService = new BasicDataService('AuthUser', AuthUser);
 
@@ -37,7 +37,7 @@ app.use(checkKeyAuthentication);
 
 //---------- auth methods ------------//
 
-const ACCESS_KEY = 'tadam';
+const ACCESS_KEY = process.env.MONGODB_URI || 'tadam';
 
 function checkKeyAuthentication(req, res, next){
     let params = url.parse(req.url, true).query;
