@@ -42,7 +42,11 @@ const ACCESS_KEY = process.env.ACCESS_KEY || 'tadam';
 function checkKeyAuthentication(req, res, next){
     let params = url.parse(req.url, true).query;
     let paramsKeys = Object.keys(params);
+
+    debugger;
     if(params.key === ACCESS_KEY){
+        next();
+    } else if('token' in params && req.url.indexOf('/activation-token') === 0){
         next();
     } else {
         res.writeHead(401);
