@@ -20,11 +20,11 @@ const RecipesCollectionDataService = new BasicDataService('RecipesCollection', R
 const RecipesCollectionRouterHelper = new BasicRouterHelper();
 
 RecipesCollectionRouter.get('/', function (req, res, next){
-    let userId: string = req.user._id;
+    let userId: string = req.user._id.toString();
     let recipes: RecipeModel[] = [];
 
     RecipesCollectionDataService.find({ userId: userId },(err, result)=>{
-        if(!err){
+        if(!err && result){
             RecipesDataService.findMany("_id", result.recipesId,
                 (success)=>{ recipes.push(success) },
                 (error)=>{
@@ -32,8 +32,9 @@ RecipesCollectionRouter.get('/', function (req, res, next){
                 },
                 (complete)=>{
                     res.send(recipes)
-                }
-            )
+                })
+        } else if (!result){
+            res.send(recipes)
         } else {
             next(createError(404, err.message));
         }
@@ -42,16 +43,19 @@ RecipesCollectionRouter.get('/', function (req, res, next){
 
 RecipesCollectionRouter.post('/', function (req, res, next){
     let recipesIds: string[] = [];
-    let userId: string = req.user._id;
+    let userId: string = req.user._id.toString();
 
     RecipesDataService.updateMany('label', req.body,
         (success)=>{
-            recipesIds.push(success._id);
+            if(success !== null){
+                recipesIds.push(success._id);
+            }
         },
         (error)=>{
             next(createError(400, error.message));
         },
         (complete)=>{
+            debugger;
             RecipesCollectionDataService.update({ userId: userId },{ userId: userId, recipesId: recipesIds },
                 (error, result)=>{
                     if(error){

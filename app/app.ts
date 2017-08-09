@@ -6,11 +6,14 @@ import { BasicStrategy } from 'passport-http';
 import * as session from 'express-session';
 import * as url from "url";
 import * as createError from "http-errors";
+import * as cors from "cors";
+const Hawk = require('hawk');
 
 // ---------------------- // ROUTERS // ---------------------------//
 import { RecipesCollectionRouter } from './routes/recipes-collection.router';
 import { UserRouter } from './routes/users.router';
 import { ActivationTokenRouter } from './routes/activation-token.router';
+import { LoginRouter } from './routes/login.router';
 
 // --------------------// DATA // ------------------- //
 import { BasicDataService } from './services/basic-data.service';
@@ -29,21 +32,22 @@ mongoose.connect(DB_URL);
 
 //---------- MIDDLEWARE ------------//
 
+app.use(cors());
 app.use(passport.initialize());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
 app.use(checkKeyAuthentication);
 
+
 //---------- auth methods ------------//
 
-const ACCESS_KEY = process.env.ACCESS_KEY || 'tadam';
+const ACCESS_KEY = process.env.ACCESS_KEY || 'OLD4W4gLcxViydpgK0vRZJo8LaetrQDHTSfkVPrTi8okZfTMv6wmFsjHaxeLypwBrBq7Pmr0mefzaRw';
 
 function checkKeyAuthentication(req, res, next){
     let params = url.parse(req.url, true).query;
     let paramsKeys = Object.keys(params);
 
-    debugger;
     if(params.key === ACCESS_KEY){
         next();
     } else if('token' in params && req.url.indexOf('/activation-token') === 0){
@@ -55,8 +59,8 @@ function checkKeyAuthentication(req, res, next){
 }
 
 passport.use(new BasicStrategy(
-    function(username, password, done) {
-        UserDataService.find({username: username, password: password},
+    function(email, password, done) {
+        UserDataService.find({email: email, password: password},
             function(error, user){
                 if (error) {
                     console.log(error);
@@ -66,7 +70,7 @@ passport.use(new BasicStrategy(
                         console.log('unknown user');
                         return done(error);
                     } else {
-                        console.log(user.username + ' authenticated successfully');
+                        console.log(user.email + ' authenticated successfully');
                         return done(null, user);
                     }
                 }
@@ -82,13 +86,14 @@ function checkIsUserIsActive(req, res, next){
                 if(user.active){
                     next();
                 } else {
-                    res.send('User unactive')
+                    next(createError(406, 'User unactive'));
                 }
             } else {
                 next(createError(400, error.message ))
             }
         })
 }
+
 // ----------- backend connection check ------------ //
 
 app.get('/hello',
@@ -116,8 +121,10 @@ app.get('/login',
     checkIsUserIsActive,
     (req, res)=>{
         res.writeHead(200);
+        res.end();
     });
 
 app.listen(port, function () {
     console.log('Node-cookbook app listening on port ' + port)
 });
+
